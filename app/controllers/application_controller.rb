@@ -11,11 +11,9 @@ class ApplicationController < ActionController::Base
   end
 
   def show_post
-    id = params[:id]
-
-    post = connection.execute("SELECT * FROM posts WHERE id = ?", id)
-
-    render 'application/show_post', locals: {post: post.first}
+    find_query = "SELECT * FROM posts WHERE id = ?"
+    post = connection.execute(find_query, params[:id]).first
+    render 'application/show_post', locals: {post: post}
   end
 
   def new_post
@@ -33,6 +31,26 @@ class ApplicationController < ActionController::Base
       params['author'],
       Date.current.to_s
 
+    redirect_to '/list_posts'
+  end
+
+  def edit_post
+    find_query = "SELECT * FROM posts WHERE id = ?"
+    post = connection.execute(find_query, params[:id]).first
+
+    render 'application/edit_post', locals: {post: post}
+  end
+
+  def update_post
+    update_query = <<-SQL
+      UPDATE posts
+      SET   title = ?,
+            body = ?,
+            author = ?
+      WHERE id = ?
+    SQL
+
+    connection.execute update_query, params['title'], params['body'], params['author'], params['id']
     redirect_to '/list_posts'
   end
 
