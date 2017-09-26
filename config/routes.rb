@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   post '/create_post'       => 'application#create_post'
   get  '/edit_post/:id'     => 'application#edit_post'
   post '/update_post/:id'   => 'application#update_post'
+  post '/delete_post/:id'   => 'application#delete_post'
 end

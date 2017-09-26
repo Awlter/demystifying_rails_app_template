@@ -11,9 +11,8 @@ class ApplicationController < ActionController::Base
   end
 
   def show_post
-    find_query = "SELECT * FROM posts WHERE id = ?"
-    post = connection.execute(find_query, params[:id]).first
-    render 'application/show_post', locals: {post: post}
+    post = find_post_by_id(params[:id])
+    render 'application/show_post', locals: { post: post }
   end
 
   def new_post
@@ -35,10 +34,8 @@ class ApplicationController < ActionController::Base
   end
 
   def edit_post
-    find_query = "SELECT * FROM posts WHERE id = ?"
-    post = connection.execute(find_query, params[:id]).first
-
-    render 'application/edit_post', locals: {post: post}
+    post = find_post_by_id(params[:id])
+    render 'application/edit_post', locals: { post: post }
   end
 
   def update_post
@@ -54,11 +51,22 @@ class ApplicationController < ActionController::Base
     redirect_to '/list_posts'
   end
 
+  def delete_post
+    connection.execute("DELETE FROM posts WHERE id = ?", params[:id])
+
+    redirect_to '/list_posts'
+  end
+
   private
 
   def connection
     db_connection = SQLite3::Database.new 'db/development.sqlite3'
     db_connection.results_as_hash = true
     db_connection
+  end
+
+  def find_post_by_id(id)
+    find_query = "SELECT * FROM posts WHERE id = ?"
+    post = connection.execute(find_query, id).first
   end
 end
