@@ -1,6 +1,13 @@
 class Post
   attr_reader :id, :title, :body, :author, :create_at
 
+  def self.all
+    post_hashes = connection.execute("SELECT * FROM posts")
+    post_hashes.map do |post_hash|
+      Post.new(post_hash)
+    end
+  end
+
   def self.find(id)
     find_query = "SELECT * FROM posts WHERE id = ?"
     post_hash = connection.execute(find_query, id).first
@@ -15,6 +22,14 @@ class Post
   end
 
   def save
+    if new_record?
+      insert
+    else
+      update
+    end
+  end
+
+  def insert
     insert_query = <<-SQL
       INSERT INTO posts (title, body, author, create_at) VALUES (?, ?, ?, ?)
     SQL
@@ -26,15 +41,40 @@ class Post
       Date.current.to_s
   end
 
-  def initialize(attributes={})
-    @id = attributes['id']
+  def update
+    update_query = <<-SQL
+      UPDATE posts
+      SET   title = ?,
+            body = ?,
+            author = ?
+      WHERE id = ?
+    SQL
+
+    connection.execute update_query,
+      title, body, author, id
+  end
+
+  def destroy
+    connection.execute("DELETE FROM posts WHERE id = ?", id)
+  end
+
+  def set_attributes(attributes)
+    @id = attributes['id'] if new_record?
     @title = attributes['title']
     @author = attributes['author']
     @body = attributes['body']
-    @create_at = attributes['create_at']
+    @create_at ||= attributes['create_at']
+  end
+
+  def initialize(attributes={})
+    set_attributes(attributes)
   end
 
   private
+
+  def new_record?
+    id.nil?
+  end
 
   def connection
     self.class.connection
