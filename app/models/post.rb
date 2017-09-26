@@ -1,5 +1,5 @@
 class Post
-  attr_reader :id, :title, :body, :author, :create_at
+  attr_reader :id, :title, :body, :author, :create_at, :errors
 
   def self.all
     post_hashes = connection.execute("SELECT * FROM posts")
@@ -22,6 +22,8 @@ class Post
   end
 
   def save
+    return false unless valid?
+
     if new_record?
       insert
     else
@@ -68,6 +70,7 @@ class Post
 
   def initialize(attributes={})
     set_attributes(attributes)
+    @errors = {}
   end
 
   private
@@ -78,5 +81,13 @@ class Post
 
   def connection
     self.class.connection
+  end
+
+  def valid?
+    @errors['title'] = "can't be blank" if title.blank?
+    @errors['author'] = "can't be blank" if author.blank?
+    @errors['body'] = "can't be blank" if body.blank?
+
+    @errors.empty?
   end
 end
