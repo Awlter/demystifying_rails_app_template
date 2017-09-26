@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   end
 
   def show_post
-    post = find_post_by_id(params[:id])
+    post = Post.find(params[:id])
     render 'application/show_post', locals: { post: post }
   end
 
@@ -20,21 +20,14 @@ class ApplicationController < ActionController::Base
   end
 
   def create_post
-    insert_query = <<-SQL
-      INSERT INTO posts (title, body, author, create_at) VALUES (?, ?, ?, ?)
-    SQL
-
-    connection.execute insert_query,
-      params['title'],
-      params['body'],
-      params['author'],
-      Date.current.to_s
+    post = Post.new('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
+    post.save
 
     redirect_to '/list_posts'
   end
 
   def edit_post
-    post = find_post_by_id(params[:id])
+    post = Post.find(params[:id])
     render 'application/edit_post', locals: { post: post }
   end
 
