@@ -61,9 +61,19 @@ class Post
     end
   end
 
+  def build_comment(attributes)
+    Comment.new(attributes.merge!('post_id' => id))
+  end
+
   def create_comment(attributes)
-    comment = Comment.new(attributes.merge!('post_id' => id))
+    comment = build_comment(attributes)
     comment.save
+  end
+
+  def delete_comment(comment_id)
+    comment = Comment.find(comment_id)
+    binding.pry
+    comment.destroy
   end
 
   def set_attributes(attributes)

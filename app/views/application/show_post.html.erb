@@ -28,19 +28,30 @@
           </small>
           <p class="comment_body"><%= comment.body %></p>
         </div>
+        <form method="post" action="/list_posts/<%= post.id %>/delete_comment/<%= comment.id %>" >
+          <input type="submit" value="Delete">
+        </form>
         <hr />
       <% end %>
     </div>
 
     <br />
 
+    <div class="errors">
+      <% comment.errors.each do |attribute, error| %>
+        <p class="error" style="color: orange">
+          <%= attribute %>: <%= error %>
+        </p>
+      <% end%>
+    </div>
+
     <form method="post" action="/create_comment_for_post/<%= post.id %>">
       <label for="body">Comment</label>
-      <textarea id="body" name="body"></textarea>
+      <textarea id="body" name="body"><%= comment.body %></textarea>
       <br /><br />
 
       <label for="author">Name</label>
-      <input id="author" type="text" name="author">
+      <input id="author" type="text" name="author" value="<%= comment.author %>">
       <br /><br />
 
       <input type="submit" value="Add Comment">
