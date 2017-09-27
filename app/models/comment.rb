@@ -1,31 +1,5 @@
-class Comment
-  attr_reader :id, :body, :author, :post_id, :created_at, :errors
-
-  def self.all
-    comment_hashes = connection.execute("SELECT * FROM comments")
-    comment_hashes.map do |comment_hash|
-      Comment.new(comment_hash)
-    end
-  end
-
-  def self.find(id)
-    comment_hash = connection.execute("SELECT * FROM comments WHERE id = ?", id).first
-    Comment.new(comment_hash)
-  end
-
-  def post
-    Post.find(post_id)
-  end
-
-  def save
-    return false unless valid?
-
-    if new_record?
-      insert
-    else
-
-    end
-  end
+class Comment < BaseModel
+  attr_reader :body, :author, :post_id, :created_at
 
   def insert
     insert_comment_query = <<-SQL
@@ -40,6 +14,10 @@ class Comment
     connection.execute("DELETE FROM comments WHERE id = ?", id)
   end
 
+  def post
+    Post.find(post_id)
+  end
+
   def initialize(attributes={})
     @id = attributes['id'] if new_record?
     @body = attributes['body']
@@ -51,20 +29,6 @@ class Comment
   end
 
   private
-
-  def self.connection
-    db_connection = SQLite3::Database.new 'db/development.sqlite3'
-    db_connection.results_as_hash = true
-    db_connection
-  end
-
-  def connection
-    self.class.connection
-  end
-
-  def new_record?
-    id.nil?
-  end
 
   def valid?
     @errors['body'] = "can't be blank" if body.blank?

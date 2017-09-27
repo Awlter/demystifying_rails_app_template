@@ -1,29 +1,5 @@
-class Post
-  attr_reader :id, :title, :body, :author, :create_at, :errors
-
-  def self.all
-    post_hashes = connection.execute("SELECT * FROM posts")
-    post_hashes.map do |post_hash|
-      Post.new(post_hash)
-    end
-  end
-
-  def self.find(id)
-    find_query = "SELECT * FROM posts WHERE id = ?"
-    post_hash = connection.execute(find_query, id).first
-
-    Post.new(post_hash)
-  end
-
-  def save
-    return false unless valid?
-
-    if new_record?
-      insert
-    else
-      update
-    end
-  end
+class Post < BaseModel
+  attr_reader :title, :body, :author, :create_at
 
   def insert
     insert_query = <<-SQL
@@ -50,10 +26,6 @@ class Post
       title, body, author, id
   end
 
-  def destroy
-    connection.execute("DELETE FROM posts WHERE id = ?", id)
-  end
-
   def comments
     comment_hashes = connection.execute("SELECT * FROM comments WHERE post_id = ?", id)
     comment_hashes.map do |comment_hash|
@@ -72,7 +44,6 @@ class Post
 
   def delete_comment(comment_id)
     comment = Comment.find(comment_id)
-    binding.pry
     comment.destroy
   end
 
@@ -90,20 +61,6 @@ class Post
   end
 
   private
-
-  def self.connection
-    db_connection = SQLite3::Database.new 'db/development.sqlite3'
-    db_connection.results_as_hash = true
-    db_connection
-  end
-
-  def connection
-    self.class.connection
-  end
-
-  def new_record?
-    id.nil?
-  end
 
   def valid?
     @errors['title'] = "can't be blank" if title.blank?
