@@ -15,12 +15,6 @@ class Post
     Post.new(post_hash)
   end
 
-  def self.connection
-    db_connection = SQLite3::Database.new 'db/development.sqlite3'
-    db_connection.results_as_hash = true
-    db_connection
-  end
-
   def save
     return false unless valid?
 
@@ -60,6 +54,18 @@ class Post
     connection.execute("DELETE FROM posts WHERE id = ?", id)
   end
 
+  def comments
+    comment_hashes = connection.execute("SELECT * FROM comments WHERE post_id = ?", id)
+    comment_hashes.map do |comment_hash|
+      Comment.new(comment_hash)
+    end
+  end
+
+  def create_comment(attributes)
+    comment = Comment.new(attributes.merge!('post_id' => id))
+    comment.save
+  end
+
   def set_attributes(attributes)
     @id = attributes['id'] if new_record?
     @title = attributes['title']
@@ -75,12 +81,18 @@ class Post
 
   private
 
-  def new_record?
-    id.nil?
+  def self.connection
+    db_connection = SQLite3::Database.new 'db/development.sqlite3'
+    db_connection.results_as_hash = true
+    db_connection
   end
 
   def connection
     self.class.connection
+  end
+
+  def new_record?
+    id.nil?
   end
 
   def valid?

@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
 
   def show_post
     post = Post.find(params[:id])
+
     render 'application/show_post', locals: { post: post }
   end
 
@@ -54,13 +55,10 @@ class ApplicationController < ActionController::Base
     redirect_to '/list_posts'
   end
 
-  private
+  def create_comment
+    post = Post.find(params[:post_id])
+    post.create_comment('body' => params['body'], 'author' => params['author'])
 
-  def connection
-    db_connection = SQLite3::Database.new 'db/development.sqlite3'
-    db_connection.results_as_hash = true
-    db_connection
+    redirect_to "/show_post/#{params['post_id']}"
   end
-
-
 end
