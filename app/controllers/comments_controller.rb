@@ -1,18 +1,17 @@
 class CommentsController < ApplicationController
   def index
-    comments = Comment.all
-    render 'application/list_comments', locals: { comments: comments }
+    @comments = Comment.all
+    render 'application/list_comments'
   end
 
   def create
-    post = Post.find(params[:post_id])
-    comment = post.build_comment('body' => params['body'], 'author' => params['author'])
-    comments = post.comments
+    @post = Post.find(params[:post_id])
+    @comment = post.build_comment('body' => params['body'], 'author' => params['author'])
 
     if comment.save
       redirect_to "/show_post/#{params['post_id']}"
     else
-      render 'application/show_post', locals: { post: post, comment: comment }
+      render 'application/show_post'
     end
   end
 

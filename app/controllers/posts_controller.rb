@@ -1,46 +1,46 @@
 class PostsController < ApplicationController
   def index
-    posts = Post.all
+    @posts = Post.all
 
-    render 'application/list_posts', locals: { posts: posts }
+    render 'application/list_posts'
   end
 
   def show
-    post = Post.find(params[:id])
-    comment = Comment.new
+    @post = Post.find(params[:id])
+    @comment = Comment.new
 
-    render 'application/show_post', locals: { post: post, comment: comment }
+    render 'application/show_post'
   end
 
   def new
-    post = Post.new
+    @post = Post.new
 
-    render 'application/new_post', locals: { post: post }
+    render 'application/new_post'
   end
 
   def create
-    post = Post.new('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
+    @post = Post.new('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
 
     if post.save
       redirect_to '/list_posts'
     else
-      render 'application/new_post', locals: { post: post }
+      render 'application/new_post'
     end
   end
 
   def edit
-    post = Post.find(params[:id])
-    render 'application/edit_post', locals: { post: post }
+    @post = Post.find(params[:id])
+    render 'application/edit_post'
   end
 
   def update
-    post = Post.find(params[:id])
-    post.set_attributes('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
+    @post = Post.find(params[:id])
+    @post.set_attributes('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
 
     if post.save
       redirect_to '/list_posts'
     else
-      render 'application/edit_post', locals: { post: post }
+      render 'application/edit_post'
     end
   end
 
