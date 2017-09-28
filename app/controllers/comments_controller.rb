@@ -7,18 +7,18 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @comment = post.build_comment('body' => params[:body], 'author' => params[:author])
+    @comment = @post.build_comment(params[:comment])
 
-    if comment.save
-      redirect_to post_path(@post)
+    if @comment.save
+      redirect_to post_path(@post.id)
     else
       render 'posts/show'
     end
   end
 
   def destroy
-    @post.delete_comment(params[:comment_id])
-    redirect_to post_path(@post)
+    @post.delete_comment(params[:id])
+    redirect_to post_path(@post.id)
   end
 
   private

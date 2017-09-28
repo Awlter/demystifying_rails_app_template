@@ -1,12 +1,10 @@
 <html>
   <body>
-
     <div class="posts">
       <% @posts.each do |post| %>
         <div class="post">
-
           <h2 class="title">
-            <a href="/show_post/<%= post.id %>"><%= post.title %></a>
+            <%= link_to post.title, post_path(post.id) %>
           </h2>
 
           <small class="meta">
@@ -14,20 +12,19 @@
             <em class="created_at"><%= post.create_at %></em>
           </small>
 
-          <a href="/edit_post/<%= post.id %>">Edit Post</a>
+          <%= link_to 'Edit', edit_post_path(post.id) %>
 
-          <form method='post' action="/delete_post/<%= post.id %>" style="display: inline">
-            <input type="submit" value="Delete">
-          </form>
-
+          <%= form_tag post_path(post.id), method: 'delete', style: "display: inline" do %>
+            <%= submit_tag 'Delete' %>
+          <% end %>
         </div>
+
         <hr />
       <% end %>
     </div>
 
     <br />
 
-    <a href="/new_post">New Post</a>
-
+    <%= link_to 'New Post', new_post_path %>
   </body>
 </html>
