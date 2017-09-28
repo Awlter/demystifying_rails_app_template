@@ -1,7 +1,7 @@
 class CommentsController < ApplicationController
   def index
     @comments = Comment.all
-    render 'application/list_comments'
+    render comments_path
   end
 
   def create
@@ -9,15 +9,15 @@ class CommentsController < ApplicationController
     @comment = post.build_comment('body' => params['body'], 'author' => params['author'])
 
     if comment.save
-      redirect_to "/show_post/#{params['post_id']}"
+      redirect_to post_path(@post)
     else
-      render 'application/show_post'
+      render 'posts/show'
     end
   end
 
-  def delete
+  def destroy
     post = Post.find(params[:post_id])
     post.delete_comment(params[:comment_id])
-    redirect_to "/show_post/#{params['post_id']}"
+    redirect_to post_path(post)
   end
 end

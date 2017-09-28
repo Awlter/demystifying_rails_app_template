@@ -1,36 +1,29 @@
 class PostsController < ApplicationController
   def index
     @posts = Post.all
-
-    render 'application/list_posts'
   end
 
   def show
     @post = Post.find(params[:id])
     @comment = Comment.new
-
-    render 'application/show_post'
   end
 
   def new
     @post = Post.new
-
-    render 'application/new_post'
   end
 
   def create
     @post = Post.new('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
 
     if post.save
-      redirect_to '/list_posts'
+      redirect_to posts_path
     else
-      render 'application/new_post'
+      render 'new'
     end
   end
 
   def edit
     @post = Post.find(params[:id])
-    render 'application/edit_post'
   end
 
   def update
@@ -38,16 +31,16 @@ class PostsController < ApplicationController
     @post.set_attributes('title' => params['title'], 'author' => params['author'], 'body' => params['body'])
 
     if post.save
-      redirect_to '/list_posts'
+      redirect_to post_path(@post)
     else
-      render 'application/edit_post'
+      render 'edit'
     end
   end
 
-  def post
+  def destroy
     post = Post.find(params[:id])
     post.destroy
 
-    redirect_to '/list_posts'
+    redirect_to posts_path
   end
 end
