@@ -28,10 +28,8 @@ class PostsController < ApplicationController
   end
 
   def update
-    @post.set_attributes(params[:post])
-
-    if @post.save
-      redirect_to post_path(@post.id)
+    if @post.update_attributes(params[:post])
+      redirect_to post_path(@post)
     else
       render 'edit'
     end
