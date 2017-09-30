@@ -7,7 +7,7 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @comment = @post.comments.build(params[:comment])
+    @comment = @post.comments.build(comment_params)
     if @comment.save
       flash['success'] = "You have successfully created the comment."
       redirect_to post_path(@post)
@@ -23,6 +23,10 @@ class CommentsController < ApplicationController
   end
 
   private
+
+  def comment_params
+    params.require(:comment).permit!
+  end
 
   def find_post
     @post = Post.find(params[:post_id])

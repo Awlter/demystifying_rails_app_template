@@ -1,8 +1,6 @@
 <%= render 'shared/errors', obj: @post %>
 
-<%= form_tag post_path(@post.id), method: 'patch' do %>
-  <%= render 'form_fields' %>
-<% end %>
+<%= render 'form' %>
 
 <br />
 

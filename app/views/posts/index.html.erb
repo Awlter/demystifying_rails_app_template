@@ -7,12 +7,12 @@
 
       <small class="meta">
         <span class="author">by <%= post.author %> -</span>
-        <em class="created_at"><%= post.create_at %></em>
+        <em class="created_at"><%= post.created_at %></em>
       </small>
 
       <%= link_to 'Edit', edit_post_path(post.id) %>
 
-      <%= form_tag post_path(post.id), method: 'delete', style: "display: inline" do %>
+      <%= form_for post, method: 'delete', style: "display: inline" do %>
         <%= submit_tag 'Delete' %>
       <% end %>
     </div>

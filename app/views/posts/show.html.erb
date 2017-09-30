@@ -27,7 +27,7 @@
       <p class="comment_body"><%= comment.body %></p>
     </div>
 
-    <%= form_tag post_comment_path(@post.id, comment.id), method: 'delete' do %>
+    <%= form_for [@post, comment], method: 'delete' do %>
       <%= submit_tag 'Delete' %>
     <% end %>
     <hr />
@@ -38,12 +38,12 @@
 
 <%= render 'shared/errors', obj: @comment %>
 
-<%= form_tag post_comments_path(@post.id) do %>
-  <%= label_tag :body, 'Comment' %>
-  <%= text_area_tag 'comment[body]', @comment.body %>
+<%= form_for [@post, @comment] do |f| %>
+  <%= f.label 'Comment' %>
+  <%= f.text_area :body %>
   <br /><br />
-  <%= label_tag :author, 'Name' %>
-  <%= text_field_tag 'comment[author]', @comment.author %>
+  <%= f.label :author %>
+  <%= f.text_field :author %>
   <br /><br />
-  <%= submit_tag 'Add Comment' %>
+  <%= f.submit 'Add Comment' %>
 <% end %>
